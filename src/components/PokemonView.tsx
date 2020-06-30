@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
-import { createPopper } from '@popperjs/core'
 
 import { Pokemon } from '../classes'
+import PokemonType from './PokemonType'
 
 type PokemonProps = {
     id: number | string
@@ -25,21 +25,40 @@ export default class PokemonView extends Component<PokemonProps, PokemonStates> 
     async componentDidMount() {
         let view: Pokemon = new Pokemon(this.props.id)
         await view.fetchInfo()
-        // @ts-ignore
-        await this.setState({name: view.info.name, sprite: Pokemon.getSprite(view.id), loading: false})
+        await this.setState({
+            // @ts-ignore
+            name: view.info.name, info: view.info,
+            sprite: Pokemon.getSprite(view.id), 
+            loading: false
+        })
     }
 
     render() {
         return(
-            <div>
+            <div className="pokemon-view">
                 {
                     !this.state.loading ?
                         <Fragment>
-                            <h1>{this.state.name}</h1>
-                            <img src={this.state.sprite} />
+                            {
+                                // @ts-ignore
+                                <p className="pokemon-id">#{this.state.info.id}</p>
+                            }
+                            <img className="pokemon-img" src={this.state.sprite} />
+                            <ul className="type-list">
+                                {
+                                    //@ts-ignore
+                                    this.state.info.types.map(type => (
+                                        <li>
+                                            <PokemonType key={this.state.name + "-" + type.type.name} type={type.type.name} />
+                                        </li>
+                                    ))
+                                }
+                            </ul>
+
+                            <p className="pokemon-name">{this.state.name}</p>
                         </Fragment>
                     :
-                        <p>Loading...</p>
+                        <p className="pokemon-loading">Loading...</p>
                 }
             </div>
         )
